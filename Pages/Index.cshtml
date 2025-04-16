@@ -1,8 +1,7 @@
 ﻿@page
-@model IndexModel
-@{
-    ViewData["Title"] = "Página Inicial";
-}
+@model vigia.Pages.IndexModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 
-<h1>@ViewData["Title"]</h1>
-<p>Bem-vindo!</p>
+<h1>Bem-vindo, @(User.Identity?.Name ?? "Usuário")!</h1>
+<p>Você está autenticado.</p>
