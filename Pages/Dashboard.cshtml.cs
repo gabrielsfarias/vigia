@@ -1,24 +1,36 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using vigia.Models; // Ajuste o namespace conforme a localização dos seus models
+using vigia.Data;
+using vigia.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace vigia.Pages;
 
 [Authorize]
-public class DashboardModel : PageModel
+public class DashboardModel(ApplicationDbContext context, UserManager<Usuario> userManager) : PageModel
 {
-    // Propriedade pública para ser usada na view
-    public IList<Documento> Documentos { get; set; } = new List<Documento>();
+    private readonly ApplicationDbContext _context = context;
+    private readonly UserManager<Usuario> _userManager = userManager;
 
-    private readonly UserManager<Usuario> _userManager;
-    public DashboardModel(UserManager<Usuario> userManager)
+    public IList<Documento> Documentos { get; set; } = [];
+
+    public async Task<IActionResult> OnGetAsync()
     {
-        _userManager = userManager;
-    }
-    public void OnGet()
-    {
-        var usuario = _userManager.GetUserAsync(User).Result;
-        Documentos = [new() { Id = 1, TipoDocumento = new TipoDocumento { Nome = "Exemplo" }, DataValidade = DateTime.Today.AddDays(10), UsuarioId = usuario.Id, Usuario = usuario }];
+        var usuario = await _userManager.GetUserAsync(User);
+
+        if (usuario == null)
+        {
+            return RedirectToPage("/Identity/Account/Login");
+
+        }
+
+        Documentos = await _context.Documentos
+            .Include(d => d.TipoDocumento)
+            .Where(d => d.UsuarioId == usuario.Id)
+            .ToListAsync();
+
+        return Page();
     }
 }
