@@ -4,10 +4,17 @@ using vigia.Models;
 
 namespace vigia.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<Usuario>(options)
     {
-        public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Documento> Documentos { get; set; }
         public DbSet<TipoDocumento> TiposDocumento { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Usuario>().ToTable("Usuarios");
+            modelBuilder.Entity<Documento>().ToTable("Documentos");
+            modelBuilder.Entity<TipoDocumento>().ToTable("TiposDocumento");
+        }
+
     }
 }
