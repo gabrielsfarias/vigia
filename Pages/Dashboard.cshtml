@@ -1,0 +1,45 @@
+﻿@page
+@model vigia.Pages.DashboardModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<h2>Dashboard de Documentos</h2>
+<p>Bem-vindo ao seu painel de controle de documentos.</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Número</th>
+            <th>Tipo</th>
+            <th>Validade</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @* Aqui vamos listar os documentos *@
+        @foreach (var doc in Model.Documentos)
+        {
+            <tr>
+                <td>@doc.Id</td>
+                <td>@doc.TipoDocumento.Nome</td>
+                <td>@doc.DataValidade.ToShortDateString()</td>
+                <td>
+                    @{
+                        var diasRestantes = (doc.DataValidade - DateTime.Today).Days;
+                        if (diasRestantes < 0)
+                        {
+                            <span class="badge bg-danger">Vencido</span>
+                        }
+                        else if (diasRestantes <= 30)
+                        {
+                            <span class="badge bg-warning text-dark">@diasRestantes dias</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Ok</span>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
