@@ -5,6 +5,8 @@
 
 <h2>Dashboard de Documentos</h2>
 <p>Bem-vindo ao seu painel de controle de documentos.</p>
+<a asp-page="/Documentos/Create" class="btn btn-primary mb-3">Adicionar Novo Documento</a>
+
 <table class="table table-striped">
     <thead>
         <tr>
@@ -18,7 +20,7 @@
         @foreach (var doc in Model.Documentos)
         {
             <tr>
-                <td>@doc.Id</td>
+                <td>@doc.NumeroDocumento</td>
                 <td>@doc.TipoDocumento.Nome</td>
                 <td>@doc.DataValidade.ToShortDateString()</td>
                 <td>

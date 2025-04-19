@@ -1,0 +1,49 @@
+@page
+@model vigia.Pages.Documentos.CreateModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Adicionar Novo Documento</h2>
+
+            <form method="post">
+                <div class="mb-3">
+                    <label asp-for="Documento.TipoDocumentoId" class="form-label">Tipo de Documento (selecione)</label>
+                    <select asp-for="Documento.TipoDocumentoId" class="form-select" asp-items="Model.TiposDocumentosSelectList">
+                        <option value="0">-- Selecione um tipo existente --</option>
+                    </select>
+                    <span asp-validation-for="Documento.TipoDocumentoId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NovoTipoDocumentoNome" class="form-label">Ou informe um novo tipo de documento</label>
+                    <input asp-for="NovoTipoDocumentoNome" class="form-control" placeholder="Novo tipo de documento" />
+                    <span asp-validation-for="NovoTipoDocumentoNome" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+    <label asp-for="Documento.NumeroDocumento" class="form-label">Número do Documento</label>
+    <input asp-for="Documento.NumeroDocumento" class="form-control" placeholder="Digite o número do documento" />
+    <span asp-validation-for="Documento.NumeroDocumento" class="text-danger"></span>
+</div>
+
+
+                <div class="mb-3">
+                    <label asp-for="Documento.DataValidade" class="form-label"></label>
+                    <input asp-for="Documento.DataValidade" class="form-control" type="date" />
+                    <span asp-validation-for="Documento.DataValidade" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <a asp-page="/Dashboard" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

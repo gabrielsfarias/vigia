@@ -7,7 +7,8 @@ namespace vigia.Data
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<Usuario>(options)
     {
         public DbSet<Documento> Documentos { get; set; }
-        public DbSet<TipoDocumento> TiposDocumento { get; set; }
+        public DbSet<TipoDocumento> TiposDocumentos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
