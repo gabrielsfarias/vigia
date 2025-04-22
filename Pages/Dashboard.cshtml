@@ -21,7 +21,7 @@
         {
             <tr>
                 <td>@doc.NumeroDocumento</td>
-                <td>@doc.TipoDocumento.Nome</td>
+                <td>@doc.TipoDocumento?.Nome</td>
                 <td>@doc.DataValidade.ToShortDateString()</td>
                 <td>
                     @{

@@ -11,7 +11,10 @@ public class IndexModel(ILogger<IndexModel> logger) : PageModel
     {
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            _logger.LogInformation("Usuário autenticado redirecionado para Dashboard: {User}", User.Identity.Name);
+            _logger.LogInformation(
+                "Usuário autenticado redirecionado para Dashboard: {User}",
+                User.Identity.Name
+            );
             return RedirectToPage("/Dashboard");
         }
 

@@ -4,7 +4,8 @@ using vigia.Models;
 
 namespace vigia.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<Usuario>(options)
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : IdentityDbContext<Usuario>(options)
     {
         public DbSet<Documento> Documentos { get; set; }
         public DbSet<TipoDocumento> TiposDocumentos { get; set; }
@@ -16,6 +17,5 @@ namespace vigia.Data
             modelBuilder.Entity<Documento>().ToTable("Documentos");
             modelBuilder.Entity<TipoDocumento>().ToTable("TiposDocumento");
         }
-
     }
 }

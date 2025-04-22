@@ -12,26 +12,18 @@ namespace vigia.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_Documentos_AspNetUsers_UsuarioId",
-                table: "Documentos");
+                table: "Documentos"
+            );
 
-            migrationBuilder.DropColumn(
-                name: "Discriminator",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "Discriminator", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "Nome",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "Nome", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "Senha",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "Senha", table: "AspNetUsers");
 
             migrationBuilder.CreateTable(
                 name: "Usuarios",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "TEXT", nullable: false)
-                },
+                columns: table => new { Id = table.Column<string>(type: "TEXT", nullable: false) },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuarios", x => x.Id);
@@ -40,8 +32,10 @@ namespace vigia.Migrations
                         column: x => x.Id,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Documentos_Usuarios_UsuarioId",
@@ -49,7 +43,8 @@ namespace vigia.Migrations
                 column: "UsuarioId",
                 principalTable: "Usuarios",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
         }
 
         /// <inheritdoc />
@@ -57,10 +52,10 @@ namespace vigia.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_Documentos_Usuarios_UsuarioId",
-                table: "Documentos");
+                table: "Documentos"
+            );
 
-            migrationBuilder.DropTable(
-                name: "Usuarios");
+            migrationBuilder.DropTable(name: "Usuarios");
 
             migrationBuilder.AddColumn<string>(
                 name: "Discriminator",
@@ -68,19 +63,22 @@ namespace vigia.Migrations
                 type: "TEXT",
                 maxLength: 13,
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "Nome",
                 table: "AspNetUsers",
                 type: "TEXT",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "Senha",
                 table: "AspNetUsers",
                 type: "TEXT",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Documentos_AspNetUsers_UsuarioId",
@@ -88,7 +86,8 @@ namespace vigia.Migrations
                 column: "UsuarioId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
         }
     }
 }

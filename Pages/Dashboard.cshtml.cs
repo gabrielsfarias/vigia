@@ -1,15 +1,16 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using vigia.Data;
 using vigia.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace vigia.Pages;
 
 [Authorize]
-public class DashboardModel(ApplicationDbContext context, UserManager<Usuario> userManager) : PageModel
+public class DashboardModel(ApplicationDbContext context, UserManager<Usuario> userManager)
+    : PageModel
 {
     private readonly ApplicationDbContext _context = context;
     private readonly UserManager<Usuario> _userManager = userManager;
@@ -23,11 +24,10 @@ public class DashboardModel(ApplicationDbContext context, UserManager<Usuario> u
         if (usuario == null)
         {
             return RedirectToPage("/Identity/Account/Login");
-
         }
 
-        Documentos = await _context.Documentos
-            .Include(d => d.TipoDocumento)
+        Documentos = await _context
+            .Documentos.Include(d => d.TipoDocumento)
             .Where(d => d.UsuarioId == usuario.Id)
             .ToListAsync();
 

@@ -15,15 +15,14 @@ namespace vigia.Migrations
                 table: "Documentos",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "NumeroDocumento",
-                table: "Documentos");
+            migrationBuilder.DropColumn(name: "NumeroDocumento", table: "Documentos");
         }
     }
 }

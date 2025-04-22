@@ -15,24 +15,27 @@ namespace vigia.Migrations
                 name: "TiposDocumento",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table
+                        .Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Nome = table.Column<string>(type: "TEXT", nullable: false)
+                    Nome = table.Column<string>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TiposDocumento", x => x.Id);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Documentos",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                    Id = table
+                        .Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     DataValidade = table.Column<DateTime>(type: "TEXT", nullable: false),
                     TipoDocumentoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UsuarioId = table.Column<string>(type: "TEXT", nullable: false)
+                    UsuarioId = table.Column<string>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -42,34 +45,37 @@ namespace vigia.Migrations
                         column: x => x.UsuarioId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Cascade
+                    );
                     table.ForeignKey(
                         name: "FK_Documentos_TiposDocumento_TipoDocumentoId",
                         column: x => x.TipoDocumentoId,
                         principalTable: "TiposDocumento",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Documentos_TipoDocumentoId",
                 table: "Documentos",
-                column: "TipoDocumentoId");
+                column: "TipoDocumentoId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Documentos_UsuarioId",
                 table: "Documentos",
-                column: "UsuarioId");
+                column: "UsuarioId"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Documentos");
+            migrationBuilder.DropTable(name: "Documentos");
 
-            migrationBuilder.DropTable(
-                name: "TiposDocumento");
+            migrationBuilder.DropTable(name: "TiposDocumento");
         }
     }
 }
