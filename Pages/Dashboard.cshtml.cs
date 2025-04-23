@@ -9,21 +9,29 @@ using vigia.Models;
 namespace vigia.Pages;
 
 [Authorize]
-public class DashboardModel(ApplicationDbContext context, UserManager<Usuario> userManager)
-    : PageModel
+public class DashboardModel : PageModel
 {
-    private readonly ApplicationDbContext _context = context;
-    private readonly UserManager<Usuario> _userManager = userManager;
+    private readonly ApplicationDbContext _context;
+    private readonly UserManager<Usuario> _userManager;
 
-    public IList<Documento> Documentos { get; set; } = [];
+    public DashboardModel(ApplicationDbContext context, UserManager<Usuario> userManager)
+    {
+        _context = context;
+        _userManager = userManager;
+    }
+
+    [BindProperty]
+    public Documento? Documento { get; set; } = null!;
+
+    public IList<Documento> Documentos { get; set; } = default!;
 
     public async Task<IActionResult> OnGetAsync()
     {
         var usuario = await _userManager.GetUserAsync(User);
 
-        if (usuario == null)
+        if (usuario is null)
         {
-            return RedirectToPage("/Identity/Account/Login");
+            return NotFound();
         }
 
         Documentos = await _context
@@ -32,5 +40,50 @@ public class DashboardModel(ApplicationDbContext context, UserManager<Usuario> u
             .ToListAsync();
 
         return Page();
+    }
+
+    public async Task<IActionResult> OnGetListDocumentsPartialAsync()
+    {
+        var usuario = await _userManager.GetUserAsync(User);
+
+        if (usuario is null)
+        {
+            return NotFound();
+        }
+
+        var documentos = await _context
+            .Documentos.Include(d => d.TipoDocumento)
+            .Where(d => d.UsuarioId == usuario.Id)
+            .ToListAsync();
+
+        return Partial("_DocumentosTableBody", documentos);
+    }
+
+    public async Task<IActionResult> OnPostDeleteAsync(long id)
+    {
+        var usuario = await _userManager.GetUserAsync(User);
+
+        if (usuario is null)
+        {
+            return NotFound();
+        }
+
+        var documento = await _context.Documentos.FindAsync(id);
+
+        if (documento == null)
+        {
+            return NotFound();
+        }
+
+        if (documento.UsuarioId != usuario.Id)
+        {
+            return Forbid();
+        }
+
+        _context.Documentos.Remove(documento);
+        await _context.SaveChangesAsync();
+        TempData["SuccessMessage"] = "Documento apagado com sucesso!";
+
+        return RedirectToPage();
     }
 }

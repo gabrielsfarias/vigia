@@ -5,15 +5,26 @@
 
 <h2>Dashboard de Documentos</h2>
 <p>Bem-vindo ao seu painel de controle de documentos.</p>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div id="successBanner" class="alert alert-success alert-dismissible fade show" role="alert"
+        style="position: fixed; top: 1rem; right: 1rem; min-width: 250px; z-index: 1050;">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    </div>
+}
+
 <a asp-page="/Documentos/Create" class="btn btn-primary mb-3">Adicionar Novo Documento</a>
 
-<table class="table table-striped">
+<table class="table table-striped" id="documentosTable">
     <thead>
         <tr>
             <th>Número</th>
             <th>Tipo</th>
             <th>Validade</th>
             <th>Status</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
@@ -40,7 +51,19 @@
                         }
                     }
                 </td>
+                <td>
+                    <a asp-page="/Documentos/Edit" asp-route-id="@doc.Id" class="btn btn-sm btn-primary">Editar</a>
+
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@doc.Id" style="display:inline"
+                        onsubmit="return confirm('Tem certeza que deseja apagar este documento?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Apagar</button>
+                    </form>
+                </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="~/js/site.js"></script>
+}
