@@ -1,33 +1,46 @@
 @page
 @model vigia.Pages.Documentos.CreateModel
-@using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
+@{
+    ViewData["Title"] = "Criar Documento";
+}
 
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <h2 class="text-center mb-4">Adicionar Novo Documento</h2>
+            <h2 class="mb-4 text-center">Criar Novo Documento</h2>
 
             <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Dropdown para tipo existente -->
                 <div class="mb-3">
-                    <label asp-for="Documento.TipoDocumentoId" class="form-label">Tipo de Documento (selecione)</label>
-                    <select asp-for="Documento.TipoDocumentoId" class="form-select" asp-items="Model.TiposDocumentosSelectList">
-                        <option value="0">-- Selecione um tipo existente --</option>
+                    <label for="TipoDocumentoId" class="form-label">Selecione um tipo existente:</label>
+                    <select asp-for="Documento.TipoDocumentoId" class="form-select" id="TipoDocumentoId">
+                        <option value="">-- Selecione um tipo --</option>
+                        @foreach (var tipo in Model.TiposDocumentos)
+                        {
+                            <option value="@tipo.Id">@tipo.Nome</option>
+                        }
                     </select>
                     <span asp-validation-for="Documento.TipoDocumentoId" class="text-danger"></span>
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="NovoTipoDocumentoNome" class="form-label">Ou informe um novo tipo de documento</label>
-                    <input asp-for="NovoTipoDocumentoNome" class="form-control" placeholder="Novo tipo de documento" />
-                    <span asp-validation-for="NovoTipoDocumentoNome" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-    <label asp-for="Documento.NumeroDocumento" class="form-label">Número do Documento</label>
-    <input asp-for="Documento.NumeroDocumento" class="form-control" placeholder="Digite o número do documento" />
-    <span asp-validation-for="Documento.NumeroDocumento" class="text-danger"></span>
-</div>
+                <div class="text-center my-4 fw-bold">OU</div>
 
+                <!-- Campo para novo tipo -->
+                <div class="mb-3">
+                    <label for="NovoTipo" class="form-label">Informe um novo tipo:</label>
+                    <input type="text" class="form-control" id="NovoTipo" name="NovoTipo"
+                        placeholder="Ex: Certidão de Nascimento" />
+                    <span asp-validation-for="NovoTipo" class="text-danger"></span>
+                </div>
+
+                <!-- Outros campos do documento -->
+                <div class="mb-3">
+                    <label asp-for="Documento.NumeroDocumento" class="form-label"></label>
+                    <input asp-for="Documento.NumeroDocumento" class="form-control" />
+                    <span asp-validation-for="Documento.NumeroDocumento" class="text-danger"></span>
+                </div>
 
                 <div class="mb-3">
                     <label asp-for="Documento.DataValidade" class="form-label"></label>
@@ -36,8 +49,8 @@
                 </div>
 
                 <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-primary">Salvar</button>
                     <a asp-page="/Dashboard" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
                 </div>
             </form>
         </div>
@@ -46,4 +59,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/create-document.js"></script>
 }

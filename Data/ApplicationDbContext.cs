@@ -16,6 +16,18 @@ namespace vigia.Data
             modelBuilder.Entity<Usuario>().ToTable("Usuarios");
             modelBuilder.Entity<Documento>().ToTable("Documentos");
             modelBuilder.Entity<TipoDocumento>().ToTable("TiposDocumento");
+            modelBuilder
+                .Entity<Documento>()
+                .HasOne(d => d.TipoDocumento)
+                .WithMany()
+                .HasForeignKey(d => d.TipoDocumentoId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder
+                .Entity<Documento>()
+                .HasOne(d => d.Usuario)
+                .WithMany()
+                .HasForeignKey(d => d.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

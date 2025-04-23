@@ -1,84 +1,72 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using vigia.Data;
 using vigia.Models;
 
-namespace vigia.Pages.Documentos;
-
-[Authorize]
-public class CreateModel(ApplicationDbContext context, UserManager<Usuario> userManager) : PageModel
+namespace vigia.Pages.Documentos
 {
-    [BindProperty]
-    public Documento Documento { get; set; } = null!;
-
-    [BindProperty]
-    public string? NovoTipoDocumentoNome { get; set; }
-
-    public SelectList TiposDocumentosSelectList { get; set; } = null!;
-
-    public async Task OnGetAsync()
+    public class CreateModel(ApplicationDbContext context) : PageModel
     {
-        TiposDocumentosSelectList = new SelectList(
-            await context.TiposDocumentos.ToListAsync(),
-            "Id",
-            "Nome"
-        );
-    }
+        // Propriedade para o formulário (bind dos dados do documento)
+        [BindProperty]
+        public required Documento Documento { get; set; }
 
-    public async Task<IActionResult> OnPostAsync()
-    {
-        if (string.IsNullOrWhiteSpace(NovoTipoDocumentoNome) && Documento.TipoDocumentoId == 0)
-        {
-            ModelState.AddModelError(
-                "Documento.TipoDocumentoId",
-                "Selecione um tipo existente ou informe um novo tipo."
-            );
-        }
+        // Propriedade para o novo tipo informado (bind do input texto)
+        [BindProperty]
+        public string NovoTipo { get; set; } = string.Empty;
 
-        if (!ModelState.IsValid)
+        // Propriedade para popular o dropdown na view (não bind, só leitura)
+        public required List<TipoDocumento> TiposDocumentos { get; set; }
+
+        public async Task<IActionResult> OnGetAsync()
         {
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors)
-            {
-                Console.WriteLine(error.ErrorMessage); // Veja o erro no console
-            }
-            TiposDocumentosSelectList = new SelectList(
-                await context.TiposDocumentos.ToListAsync(),
-                "Id",
-                "Nome"
-            );
+            // Carrega os tipos para o dropdown
+            TiposDocumentos = await context.TiposDocumentos.ToListAsync();
             return Page();
         }
 
-        if (!string.IsNullOrWhiteSpace(NovoTipoDocumentoNome))
+        public async Task<IActionResult> OnPostAsync()
         {
-            var tipoExistente = await context.TiposDocumentos.FirstOrDefaultAsync(t =>
-                t.Nome.ToLower() == NovoTipoDocumentoNome.ToLower()
-            );
+            Documento.UsuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            TiposDocumentos = await context.TiposDocumentos.ToListAsync();
 
-            if (tipoExistente != null)
+            bool tipoExistentePreenchido = Documento.TipoDocumentoId > 0;
+            bool novoTipoPreenchido = !string.IsNullOrWhiteSpace(NovoTipo);
+
+            if (!tipoExistentePreenchido && !novoTipoPreenchido)
             {
-                Documento.TipoDocumentoId = tipoExistente.Id;
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Selecione um tipo existente OU informe um novo tipo."
+                );
             }
-            else
+            else if (tipoExistentePreenchido && novoTipoPreenchido)
             {
-                var novoTipo = new TipoDocumento { Nome = NovoTipoDocumentoNome.Trim() };
-                context.TiposDocumentos.Add(novoTipo);
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Escolha apenas uma opção: tipo existente OU novo tipo."
+                );
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            if (novoTipoPreenchido)
+            {
+                var novoTipoDocumento = new TipoDocumento { Nome = NovoTipo.Trim() };
+                context.TiposDocumentos.Add(novoTipoDocumento);
                 await context.SaveChangesAsync();
-                Documento.TipoDocumentoId = novoTipo.Id;
+                Documento.TipoDocumentoId = novoTipoDocumento.Id;
             }
+
+            context.Documentos.Add(Documento);
+            await context.SaveChangesAsync();
+
+            return RedirectToPage("/Dashboard");
         }
-
-        var usuario = await userManager.GetUserAsync(User);
-        Documento.UsuarioId = usuario!.Id;
-
-        context.Documentos.Add(Documento);
-        await context.SaveChangesAsync();
-
-        return RedirectToPage("/Dashboard");
     }
 }
